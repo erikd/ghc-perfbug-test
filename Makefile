@@ -5,9 +5,9 @@ GHCFLAGS = -Wall -Werror -fwarn-tabs -fPIC -O3 $(PRAGMAS)
 
 hsfiles = $(shell find Common/ Check/ New*/ -name \*.hs -o -name \*.lhs) *.hs $(checkfiles)
 
-bench_hsfiles = Check/Bench1.hs Check/Bench2.hs Check/Bench3.hs Check/Bench4.hs
+bench_hsfiles = Check/Bench1.hs Check/Bench3.hs Check/Bench4.hs
 
-checkfiles = Check/New1.hs Check/New2.hs Check/New3.hs Check/New4.hs
+checkfiles = Check/New1.hs Check/New3.hs Check/New4.hs
 
 today := $(shell date "+%Y%m%d")
 
@@ -30,9 +30,6 @@ bench-integer : bench-integer.hs $(hsfiles) $(bench_hsfiles)
 Check/New1.hs : Check/NewX.template.hs
 	sed "s/NewX/New1/" $+ > $@
 
-Check/New2.hs : Check/NewX.template.hs
-	sed "s/NewX/New2/" $+ > $@
-
 Check/New3.hs : Check/NewX.template.hs
 	sed "s/NewX/New3/" $+ > $@
 
@@ -42,9 +39,6 @@ Check/New4.hs : Check/NewX.template.hs
 
 Check/Bench1.hs : Check/BenchX.template.hs
 	sed "s/BenchX/Bench1/;s/NewX/New1/" $+ > $@
-
-Check/Bench2.hs : Check/BenchX.template.hs
-	sed "s/BenchX/Bench2/;s/NewX/New2/" $+ > $@
 
 Check/Bench3.hs : Check/BenchX.template.hs
 	sed "s/BenchX/Bench3/;s/NewX/New3/" $+ > $@
