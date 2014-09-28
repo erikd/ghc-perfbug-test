@@ -15,7 +15,7 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Arbitrary
 import Test.QuickCheck.Modifiers
 
-import qualified New4.Integer as G
+import qualified New1.Integer as G
 import qualified NewX.GHC.Integer.Type as X
 import qualified NewX.Integer as X
 
@@ -215,11 +215,6 @@ testNewInteger = do
     prop "Can encode to Double (QC)." $ \ (GNP g n) (int :: Int32) -> do
         let i = unboxInt (fromIntegral int)
         boxDouble# (X.encodeDoubleInteger n i) `shouldBe` boxDouble# (G.encodeDoubleInteger g i)
-
-    prop "Can decode Double to (Integer, Int)." $ \ d ->
-        let (# xb, xe #) = X.decodeDoubleInteger (unboxDouble d)
-            (# gb, ge #) = G.decodeDoubleInteger (unboxDouble d)
-        in show (xb, boxInt# xe) `shouldBe` show (gb, boxInt# ge)
 
 #if New4
     prop "Can quotRemInteger small Integers." $ \ (a, NonZero b) -> do
