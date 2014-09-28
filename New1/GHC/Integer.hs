@@ -19,21 +19,12 @@
 
 module New1.GHC.Integer (
     Integer, mkInteger,
-    smallInteger, wordToInteger, integerToWord, integerToInt,
-#if WORD_SIZE_IN_BITS < 64
-    integerToWord64, word64ToInteger,
-    integerToInt64, int64ToInteger,
-#endif
-    plusInteger, minusInteger, timesInteger, negateInteger,
-    eqInteger, neqInteger, absInteger, signumInteger,
-    leInteger, gtInteger, ltInteger, geInteger, compareInteger,
-    divModInteger, quotRemInteger, quotInteger, remInteger,
-    encodeFloatInteger, decodeFloatInteger, floatFromInteger,
-    encodeDoubleInteger, decodeDoubleInteger, doubleFromInteger,
-    -- gcdInteger, lcmInteger, -- XXX
-    andInteger, orInteger, xorInteger, complementInteger,
-    shiftLInteger, shiftRInteger,
-    hashInteger,
+    smallInteger, wordToInteger,
+
+    timesInteger,
+
+    orInteger,
+    shiftLInteger
     ) where
 
 import New1.GHC.Integer.Type

@@ -16,11 +16,11 @@ import New1.GHC.Integer.Type
 
 
 instance Num Integer where
-    (+) = plusInteger
-    (-) = minusInteger
+    (+) = error "New1.Integer: plusInteger"
+    (-) = error "New1.Integer: minusInteger"
     (*) = timesInteger
-    abs = absInteger
-    signum = signumInteger
+    abs = error "New1.Integer: absInteger"
+    signum = error "New1.Integer: signumInteger"
     fromInteger = error "New1.Integer: fromInteger"
 
 
