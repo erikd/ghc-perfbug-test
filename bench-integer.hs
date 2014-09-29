@@ -15,6 +15,10 @@ main = C.defaultMain [ timesBigBench 10 ]
 timesBigBench :: Int -> C.Benchmark
 timesBigBench loopCount =
     C.bgroup "Big Integer multiplication"
-            [ C.bench "New1"    $ C.whnf Bench1.timesBigLoop loopCount
-            , C.bench "New3"    $ C.whnf Bench3.timesBigLoop loopCount
+            [ C.bench "New1-A"    $ C.whnf Bench1.timesBigLoop loopCount
+            , C.bench "New3-A"    $ C.whnf Bench3.timesBigLoop loopCount
+            , C.bench "New1-B"    $ C.whnf Bench1.timesBigLoop loopCount
+            , C.bench "New3-B"    $ C.whnf Bench3.timesBigLoop loopCount
+            , C.bench "New1-C"    $ C.whnf Bench1.timesBigLoop loopCount
+            , C.bench "New3-C"    $ C.whnf Bench3.timesBigLoop loopCount
             ]
