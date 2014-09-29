@@ -1,4 +1,5 @@
 .geany
+*.dump-*
 *.hcr
 *.html
 *.ll

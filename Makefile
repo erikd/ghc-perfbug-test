@@ -1,7 +1,9 @@
 TARGETS = check-integer bench-integer
 
+GHC_DUMP_FLAGS = -ddump-to-file -ddump-prep -ddump-cmm -ddump-opt-cmm -ddump-stg -ddump-asm
+
 GHC = ghc
-GHCFLAGS = -Wall -Werror -fwarn-tabs -fPIC -O3 $(PRAGMAS)
+GHCFLAGS = -Wall -Werror -fwarn-tabs -fPIC $(GHC_DUMP_FLAGS) -O3 $(PRAGMAS)
 
 hsfiles = $(shell find Common/ Check/ New*/ -name \*.hs -o -name \*.lhs) *.hs $(checkfiles)
 
@@ -59,7 +61,8 @@ Stamp/ghc-version :
 
 clean :
 	@rm -f $(TARGETS) bench-integer.html Check/Bench[GS0-9].hs Check/New[0-9].hs
-	@find . -name \*.o -o -name \*.hi -o -name \*.s -o -name \*.ll -o -name \*.hcr | xargs rm -f
+	@find . -name \*.o -o -name \*.hi -o -name \*.s -o -name \*.ll -o -name \*.hcr -o -name \*.dump-* | xargs rm -f
+	@rm -rf New3/GHC/Integer.slow/
 
 hlint :
 	hlint $(shell find Common/ Check/ Hnew*/ -name \*.hs)
