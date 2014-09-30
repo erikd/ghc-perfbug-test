@@ -1,6 +1,9 @@
 TARGETS = check-integer bench-integer
 
-GHC_DUMP_FLAGS = -ddump-to-file -ddump-prep -ddump-cmm -ddump-opt-cmm -ddump-stg -ddump-asm
+GHC_DUMP_FLAGS = -dsuppress-uniques -dsuppress-all -ddump-to-file -ddump-ds \
+	-ddump-simpl -ddump-simpl-iterations -ddump-simpl-stats \
+	-ddump-stranal -ddump-strsigs -ddump-prep \
+	-ddump-cmm -ddump-opt-cmm -ddump-stg -ddump-asm
 
 GHC = ghc
 GHCFLAGS = -Wall -Werror -fwarn-tabs -fPIC $(GHC_DUMP_FLAGS) -O3 $(PRAGMAS)
@@ -19,6 +22,14 @@ BROWSER ?= firefox
 
 
 all : $(TARGETS)
+
+demo :
+	make clean bench-integer.html
+	cp -f bench-integer.html bench-integer-slow.html
+	cp -r New3/GHC/Integer New3/GHC/Integer.slow
+	touch New3/GHC/Integer/Natural.hs
+	make bench-integer.html
+	$(BROWSER) bench-integer-slow.html bench-integer.html
 
 check : check-integer
 	./check-integer # | tee check.log
