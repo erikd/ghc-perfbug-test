@@ -4,8 +4,9 @@ During work on my [haskell-big-integer-experiment][bigint] project I found a
 nasty performance bug. This project is a drastically stripped down version of
 the [haskell-big-integer-experiment][bigint] codebase to demonstrate the bug.
 
+A GHC Trac ticket has been lodged [here][ghcbug].
 
-# The problem
+## The problem
 
 During development of [haskell-big-integer-experiment][bigint] I found one
 function that would run slow if the whole project was built from scratch, but
@@ -17,7 +18,7 @@ Why does touching a file and rebuilding the binary cause such a significant
 speed improvement?
 
 
-# Requirements
+## Requirements
 
 The requirements are:
 
@@ -26,7 +27,7 @@ The requirements are:
 * Make
 
 
-# Steps to reproduce
+## Steps to reproduce
 
 Clone the repo, change directory into it and then follow the following steps.
 
@@ -51,5 +52,14 @@ fasted that the New1-[ABC] tests.
 Steps 1. to 4. can be run over and over again with basically the same results.
 
 
+## Useful links
 
+* Diagram of the [GHC compiler pipeline][ghcpipe] from the [GHC chapter][aosabook]
+of the "Architecture of Open Source Applications" book.
+* GHC comiler [debugging flags][ghcflags] allowing dumping of intermediate files.
+
+[aosabook]: http://www.aosabook.org/en/ghc.html
 [bigint]: https://github.com/erikd/haskell-big-integer-experiment
+[ghcbug]: https://ghc.haskell.org/trac/ghc/ticket/9646
+[ghcpipe]: http://www.aosabook.org/images/ghc/hscpipe2.png
+[ghcflags]: https://www.haskell.org/ghc/docs/7.8.3/html/users_guide/flag-reference.html#idp15020000
