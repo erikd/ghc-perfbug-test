@@ -242,6 +242,81 @@ safeTimesWord !sign !w1 !w2 =
         (# True, Pos #) -> SmallPos (unboxWord prod)
         (# True, Neg #) -> SmallNeg (unboxWord prod)
 
+
+
+orNatural :: Natural -> Natural -> Natural
+orNatural (Natural n1 arr1) (Natural n2 arr2) = orArray n1 arr1 n2 arr2
+
+orNaturalW :: Natural -> Word -> Natural
+orNaturalW !(Natural !n !arr) !w = runStrictPrim $ do
+    marr <- newWordArray n
+    copyWordArray marr 1 arr 1 (n - 1)
+    x <- indexWordArrayM arr 0
+    writeWordArray marr 0 (w .|. x)
+    narr <- unsafeFreezeWordArray marr
+    return $! Natural n narr
+
+orArray :: Int -> WordArray -> Int -> WordArray -> Natural
+orArray !n1 !arr1 !n2 !arr2
+    | n1 < n2 = orArray n2 arr2 n1 arr1
+    | otherwise = runStrictPrim $ do
+        marr <- newWordArray n1
+        loop1 marr 0
+        narr <- unsafeFreezeWordArray marr
+        return $! Natural n1 narr
+  where
+    loop1 !marr !i
+        | i < n2 = do
+                x <- indexWordArrayM arr1 i
+                y <- indexWordArrayM arr2 i
+                writeWordArray marr i (x .|. y)
+                loop1 marr (i + 1)
+        | otherwise = loop2 marr i
+    loop2 !marr !i
+        | i < n1 = do
+                -- TODO : Use copyArray here?
+                x <- indexWordArrayM arr1 i
+                writeWordArray marr i x
+                loop2 marr (i + 1)
+        | otherwise = return ()
+
+
+shiftLNatural :: Natural -> Int -> Natural
+shiftLNatural !nat@(Natural !n !arr) !i
+    | i <= 0 = nat
+    | i < WORD_SIZE_IN_BITS =
+            smallShiftLArray n arr (# i, WORD_SIZE_IN_BITS - i #)
+    | otherwise = do
+            let (!q, !r) = quotRem i WORD_SIZE_IN_BITS
+            if r == 0
+                then wordShiftLArray n arr q
+                else largeShiftLArray n arr (# q, r, WORD_SIZE_IN_BITS - r #)
+
+
+
+
+{-# NOINLINE timesNaturalW #-}
+timesNaturalW :: Natural -> Word -> Natural
+timesNaturalW !(Natural !n !arr) !w = runStrictPrim $ do
+    marr <- newWordArray (n + 1)
+    nlen <- loop marr 0 0
+    narr <- unsafeFreezeWordArray marr
+    return $! Natural nlen narr
+  where
+    loop !marr !i !carry
+        | i < n = do
+            x <- indexWordArrayM arr i
+            let (# !c, !p #) = timesWord2C x w carry
+            writeWordArray marr i p
+            loop marr (i + 1) c
+        | carry /= 0 = do
+            writeWordArray marr i carry
+            return (i + 1)
+        | otherwise = return i
+
+
+
+
 --------------------------------------------------------------------------------
 -- Helpers (not part of the API).
 
@@ -344,5 +419,59 @@ isMinimal i =
   where
     isMinimalNatural 0 _ = False
     isMinimalNatural n arr = indexWordArray arr (n - 1) /= 0
+
+
+
+{-# INLINE zerothWordOfNatural #-}
+zerothWordOfNatural :: Natural -> Word
+zerothWordOfNatural !(Natural _ arr) = indexWordArray arr 0
+
+mkSingletonNat :: Word -> Natural
+mkSingletonNat !x = runStrictPrim mkNat
+  where
+    mkNat :: StrictPrim s Natural
+    mkNat = do
+        marr <- newWordArray 1
+        writeWordArray marr 0 x
+        narr <- unsafeFreezeWordArray marr
+        return $ Natural 1 narr
+
+
+finalizeNatural :: Int -> WordArray -> StrictPrim s Natural
+finalizeNatural 0 _ = return zeroNatural
+finalizeNatural !nin !arr = do
+    let !len = nonZeroLen nin arr
+    x <- indexWordArrayM arr 0
+    return $
+        if len < 0 || (len == 1 && x == 0)
+            then zeroNatural
+            else Natural len arr
+
+nonZeroLen :: Int -> WordArray -> Int
+nonZeroLen !len !arr
+    | len < 1 = 0
+    | otherwise =
+        let trim i
+                | i < 0 = 0
+                | indexWordArray arr i == 0 = trim (i - 1)
+                | otherwise = i + 1
+        in trim (len - 1)
+
+
+zeroNatural, oneNatural :: Natural
+zeroNatural = runStrictPrim $ do
+        marr <- newWordArray 1
+        writeWordArray marr 0 0
+        narr <- unsafeFreezeWordArray marr
+        return $! Natural 0 narr
+oneNatural = wordToNatural 1
+
+wordToNatural :: Word -> Natural
+wordToNatural w = runStrictPrim $ do
+        marr <- newWordArray 1
+        writeWordArray marr 0 w
+        narr <- unsafeFreezeWordArray marr
+        return $! Natural 1 narr
+
 
 #endif
