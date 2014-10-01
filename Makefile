@@ -24,7 +24,8 @@ BROWSER ?= firefox
 all : $(TARGETS)
 
 demo :
-	make clean bench-integer.html
+	make clean
+	make bench-integer.html
 	cp -f bench-integer.html bench-integer-slow.html
 	cp -r New3/GHC/Integer New3/GHC/Integer.slow
 	touch New3/GHC/Integer/Natural.hs
