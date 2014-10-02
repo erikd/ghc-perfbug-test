@@ -1,10 +1,12 @@
-{-# LANGUAGE BangPatterns, CPP, MagicHash, NoImplicitPrelude, UnboxedTuples #-}
+{-# LANGUAGE BangPatterns, CPP, MagicHash, NoImplicitPrelude, UnboxedTuples
+        ,UnliftedFFITypes #-}
 
 #include "MachDeps.h"
 
-module Common.GHC.Integer.Prim
+module Integer.Prim
     ( boxInt#, boxWord#, unboxInt, unboxWord
     , boxDouble#, unboxDouble
+    , int2Word
     , plusWord, plusWord2, plusWord2C, plusWord3C
     , minusWord2, minusWord2C
     , timesWord2, timesWord2C, timesWord2CC
@@ -46,6 +48,10 @@ unboxWord (W# !w#) = w#
 {-# INLINE unboxDouble #-}
 unboxDouble :: Double -> Double#
 unboxDouble (D# !d#) = d#
+
+
+int2Word :: Int -> Word
+int2Word (I# i) = (W# (int2Word# i))
 
 
 {-# INLINE plusWord #-}

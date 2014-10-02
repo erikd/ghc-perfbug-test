@@ -1,11 +1,11 @@
 {-# LANGUAGE BangPatterns #-}
-module New3.GHC.Integer.WordArray where
+module Integer.WordArray where
 
 import Control.Monad.Primitive
 import Data.Primitive
 import GHC.Word (Word)
 
--- import New3.GHC.Integer.StrictPrim
+-- import Integer.StrictPrim
 
 newtype WordArray = WA ByteArray
 

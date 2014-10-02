@@ -4,16 +4,18 @@
 
 #include "MachDeps.h"
 
-module New3.GHC.Integer.Type where
+module Integer.Type where
 
+import GHC.Classes
 import GHC.Prim
 import GHC.Types
-#if WORD_SIZE_IN_BITS < 64
-import GHC.IntWord64
-#endif
 
 
-import New3.GHC.Integer.WordArray
+import Integer.WordArray
+
+data Sign
+    = Pos | Neg
+    deriving Eq
 
 data Integer
     = SmallPos Word#

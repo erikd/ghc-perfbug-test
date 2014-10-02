@@ -13,7 +13,7 @@ State monad from Base to get StrictPrim.
 {-# LANGUAGE BangPatterns, CPP, MagicHash, NoImplicitPrelude, RankNTypes,
     TypeFamilies, UnboxedTuples #-}
 
-module Common.GHC.Integer.StrictPrim
+module Integer.StrictPrim
     ( StrictPrim
     , runStrictPrim
     ) where

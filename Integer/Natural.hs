@@ -2,15 +2,14 @@
              BangPatterns, UnboxedTuples, UnliftedFFITypes #-}
 
 
-module New3.GHC.Integer.Natural where
+module Integer.Natural where
 
 import Prelude hiding (Integer, abs, pi, sum, rem, succ)
 
-import Common.GHC.Integer.Prim
-import Common.GHC.Integer.StrictPrim
-import New3.GHC.Integer.Type
-import New3.GHC.Integer.WordArray
-
+import Integer.Prim
+import Integer.StrictPrim
+import Integer.Type
+import Integer.WordArray
 
 {-# NOINLINE timesNatural #-}
 timesNatural :: Natural -> Natural -> Natural
