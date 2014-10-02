@@ -1,9 +1,11 @@
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE BangPatterns, CPP #-}
 module Integer.WordArray where
 
 import Control.Monad.Primitive
 import Data.Primitive
+#if __GLASGOW_HASKELL__ < 709
 import GHC.Word (Word)
+#endif
 
 -- import Integer.StrictPrim
 

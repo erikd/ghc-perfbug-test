@@ -18,8 +18,14 @@ module Integer.StrictPrim
     , runStrictPrim
     ) where
 
+
+#if __GLASGOW_HASKELL__ < 709
 import GHC.Base
 import Control.Applicative
+#else
+import GHC.Base hiding (($!))
+#endif
+
 import Control.Monad.Primitive
 
 

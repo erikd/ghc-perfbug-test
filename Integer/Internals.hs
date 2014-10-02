@@ -11,7 +11,10 @@ import Prelude hiding (Integer, abs, pi, sum, rem, succ) -- (all, error, otherwi
 
 import Data.Bits
 
+#if __GLASGOW_HASKELL__ < 709
 import GHC.Types
+#endif
+
 import GHC.Tuple ()
 
 import Numeric (showHex) -- TODO: Remove when its working.
