@@ -8,23 +8,14 @@ GHCFLAGS = -Wall -Werror -fwarn-tabs -fPIC $(GHC_DUMP_FLAGS) -O3
 
 hsfiles = $(shell find   -name \*.hs -o -name \*.lhs) *.hs
 
-
-demo :
+test :
 	make clean
 	make simplest-test
-	cp -r Integer Integer.slow
-	touch Integer/Natural.hs
-	make simplest-test
-	@echo
-	@echo "    Fast version etas : `grep -c eta Integer/Natural.dump-simpl`"
-	@echo "    Slow version etas : `grep -c eta Integer.slow/Natural.dump-simpl`"
-	@echo
+	./simplest-test
 
 
 simplest-test : simplest-test.hs $(hsfiles) $(bench_hsfiles)
-	$(GHC) $(GHCFLAGS) --make $< -o $@
+	cabal exec -- $(GHC) $(GHCFLAGS) --make $< -o $@
 
 clean :
-	@rm -f $(TARGETS) bench-integer.html Check/Bench[GS0-9].hs Check/New[0-9].hs
-	@find . -name \*.o -o -name \*.hi -o -name \*.s -o -name \*.ll -o -name \*.hcr -o -name \*.dump-* | xargs rm -f
-	@rm -rf Integer.slow/
+	@rm -f simplest-test *.o *.hi *.dump*

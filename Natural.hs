@@ -1,15 +1,12 @@
-{-# LANGUAGE MagicHash, ForeignFunctionInterface, NoImplicitPrelude,
-             BangPatterns, UnboxedTuples, UnliftedFFITypes #-}
+{-# LANGUAGE BangPatterns, MagicHash, UnboxedTuples #-}
 
+module Natural where
 
-module Integer.Natural where
+import Prelude hiding (Integer, abs, sum)
 
-import Prelude hiding (Integer, abs, pi, sum, rem, succ)
+import StrictPrim
+import Type
 
-import Integer.Prim
-import Integer.StrictPrim
-import Integer.Type
-import Integer.WordArray
 
 {-# NOINLINE timesNatural #-}
 timesNatural :: Natural -> Natural -> Natural
