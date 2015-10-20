@@ -11,19 +11,18 @@ State monad from Base to get StrictPrim.
 -}
 
 {-# LANGUAGE BangPatterns, CPP, MagicHash, NoImplicitPrelude, RankNTypes,
-    TypeFamilies, UnboxedTuples #-}
+    TypeFamilies, UnboxedTuples, UnliftedFFITypes #-}
 
 module Integer.StrictPrim
     ( StrictPrim
     , runStrictPrim
     ) where
 
-
 #if __GLASGOW_HASKELL__ < 709
-import GHC.Base
 import Control.Applicative
+import GHC.Base
 #else
-import GHC.Base hiding (($!))
+import GHC.Base hiding (($!)) -- Want to use the local definition of ($!)regardless.
 #endif
 
 import Control.Monad.Primitive
@@ -65,8 +64,6 @@ instance PrimMonad (StrictPrim s) where
     type PrimState (StrictPrim s) = s
     {-# INLINE primitive #-}
     primitive = StrictPrim
-    {-# INLINE internal #-}
-    internal (StrictPrim !p) = p
 
 
 {-# INLINE runStrictPrim #-}
