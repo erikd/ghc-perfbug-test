@@ -1,32 +1,17 @@
-{-
-A Strict State Monad
-
-We want a monad we can run our Data.Primitive operations inside. Data.Primitive
-provides IO and ST instances, but we want strict evaluation.
-
-We take Carter Schonwald's StrictIdentity monad idea [0] and cross it with the
-State monad from Base to get StrictPrim.
-
-[0] http://hackage.haskell.org/package/strict-identity
--}
-
 {-# LANGUAGE BangPatterns, CPP, MagicHash, NoImplicitPrelude, RankNTypes,
     TypeFamilies, UnboxedTuples, UnliftedFFITypes #-}
 
 module StrictPrim
     ( StrictPrim
+    , PrimMonad (..)
     , runStrictPrim
     ) where
 
 #if __GLASGOW_HASKELL__ < 709
 import Control.Applicative
-import GHC.Base
-#else
-import GHC.Base hiding (($!)) -- Want to use the local definition of ($!)regardless.
 #endif
 
-import Control.Monad.Primitive
-
+import GHC.Base
 
 newtype StrictPrim s a
     = StrictPrim (State# s -> (# State# s, a #))
@@ -75,6 +60,12 @@ runStrictPrim !st =
                 (# _, !r #) -> r
 
 
+class Monad m => PrimMonad m where
+    type PrimState m
+    primitive :: (State# (PrimState m) -> (# State# (PrimState m), a #)) -> m a
+
+#if __GLASGOW_HASKELL__ < 709
 -- Grab this from Prelude (part of Base) because Base depends on this code.
 ($!) :: (a -> b) -> a -> b
 f $! x  = let !vx = x in f vx
+#endif

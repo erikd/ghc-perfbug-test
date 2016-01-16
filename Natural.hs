@@ -10,9 +10,8 @@ import Type
 
 {-# NOINLINE timesNatural #-}
 timesNatural :: Natural -> Natural -> Natural
-timesNatural !a@(Natural !n1 !arr1) !b@(Natural !n2 !arr2)
-    | n1 < n2 = timesNatural b a
-    | otherwise = runStrictPrim $ do
+timesNatural (Natural !n1 !arr1) (Natural !n2 !arr2) =
+    runStrictPrim $ do
         maxOutLen <- return (1 + n1 + n2)
         marr <- newWordArray maxOutLen
         len <- preLoop marr
@@ -81,4 +80,4 @@ timesNatural !a@(Natural !n1 !arr1) !b@(Natural !n2 !arr2)
                 (# !tcryhi, !crylo #) = plusWord2C carrylo cry0 cry1
                 !cryhi = plusWord carryhi tcryhi
             innerLoop2 (xi - 1) (yi + 1) cryhi crylo sum1
-        | otherwise = do return $! (carryhi, carrylo, sum)
+        | otherwise = return $! (carryhi, carrylo, sum)

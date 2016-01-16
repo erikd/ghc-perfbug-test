@@ -4,44 +4,48 @@
 
 module Type where
 
-import Prelude hiding (sum, ($!))
-
 import GHC.Prim
 import GHC.Types
-import Control.Monad.Primitive
-import Data.Primitive
 
+import StrictPrim
 
-data Natural
-    = Natural {-# UNPACK #-} !Int {-# UNPACK #-} !WordArray
+data Natural = Natural {-# UNPACK #-} !Int {-# UNPACK #-} !WordArray
 
-newtype WordArray = WA ByteArray
-
-newtype MutableWordArray m = MWA (MutableByteArray (PrimState m))
+data WordArray = WA ByteArray#
+data MutableWordArray m = MWA (MutableByteArray# (PrimState m))
 
 {-# INLINE newWordArray #-}
 newWordArray :: (Monad m, PrimMonad m) => Int -> m (MutableWordArray m)
 newWordArray !len = do
-    !marr <- newByteArray (len * sizeOf (0 :: Word))
-    return $ MWA marr
+    let !(I# n#) = len * sizeOfWord
+    primitive (\s# -> case newByteArray# n# s# of
+                        (# s'#, arr# #) -> (# s'#, MWA arr# #))
 
 {-# INLINE unsafeFreezeWordArray #-}
 unsafeFreezeWordArray :: (Monad m, PrimMonad m) => MutableWordArray m -> m WordArray
-unsafeFreezeWordArray !(MWA !marr) = do
-    !arr <- unsafeFreezeByteArray marr
-    return (WA arr)
+unsafeFreezeWordArray !(MWA arr#) =
+    primitive (\s# -> case unsafeFreezeByteArray# arr# s# of
+                        (# s'#, arr'# #) -> (# s'#, WA arr'# #))
 
 {-# INLINE indexWordArray #-}
 indexWordArray :: WordArray -> Int -> Word
-indexWordArray !(WA !arr) = indexByteArray arr
+indexWordArray !(WA arr#) (I# i#) =
+    let w# = indexWordArray# arr# i# in W# w#
 
 {-# INLINE indexWordArrayM #-}
 indexWordArrayM :: Monad m => WordArray -> Int -> m Word
-indexWordArrayM !(WA !arr) !i = case indexByteArray arr i of x -> return x
+indexWordArrayM !(WA arr#) (I# i#) =
+    let w# = indexWordArray# arr# i# in
+    case W# w# of x -> return x
+
 
 {-# INLINE writeWordArray #-}
 writeWordArray :: (Monad m, PrimMonad m) => MutableWordArray m -> Int -> Word -> m ()
-writeWordArray !(MWA !marr) = writeByteArray marr
+writeWordArray !(MWA arr#) (I# i#) (W# x#) =
+    primitive (\s# ->
+        case writeWordArray# arr# i# x# s# of
+            s'# -> (# s'#, () #))
+
 
 {-# INLINE plusWord #-}
 plusWord :: Word -> Word -> Word
@@ -69,3 +73,6 @@ timesWord2 (W# a) (W# b) =
     let (# !ovf, !prod #) = timesWord2# a b
     in (# W# ovf, W# prod #)
 
+
+sizeOfWord :: Int
+sizeOfWord = WORD_SIZE_IN_BITS `div` 8

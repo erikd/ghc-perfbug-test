@@ -4,7 +4,7 @@ GHC_DUMP_FLAGS = -dsuppress-uniques -dsuppress-all -ddump-to-file -ddump-ds \
 					-ddump-simpl -ddump-simpl-iterations -ddump-simpl-stats
 
 GHC = ghc
-GHCFLAGS = -Wall -fwarn-tabs -fPIC $(GHC_DUMP_FLAGS) -O3
+GHCFLAGS = -Wall -fwarn-tabs -fPIC $(GHC_DUMP_FLAGS) -O2
 
 hsfiles = $(shell find . -name \*.hs)
 
@@ -18,7 +18,4 @@ simplest-test : simplest-test.hs $(hsfiles) cbits/primitive-memops.c
 	$(GHC) $(GHCFLAGS) --make $< cbits/primitive-memops.c -o $@
 
 clean :
-	@find . -name \*.o | xargs rm -f
-	@find . -name \*.hi | xargs rm -f
-	@find . -name \*.dump* | xargs rm -f
-	@rm -f simplest-test
+	@rm -f simplest-test *.o *.hi *.dump*
